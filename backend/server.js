@@ -4,6 +4,9 @@ import cors from "cors";
 import colors from "colors";
 import connectDB from "./config/db.js";
 
+import exercisesRoutes from "./routes/exercises.js";
+import usersRoutes from "./routes/users.js";
+
 dotenv.config();
 
 const app = express();
@@ -14,6 +17,9 @@ app.use(express.json());
 
 // DB connection
 connectDB();
+
+app.use("/exercises", exercisesRoutes);
+app.use("/users", usersRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
