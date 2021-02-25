@@ -1,76 +1,75 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import axios from "axios";
+
+import { listExercises, deleteExercise } from "../actions/exerciseActions";
 
 const ExercisesList = () => {
-  const [exercises, setExercises] = useState([]);
-  const [deleted, setDeleted] = useState(false);
+  // const [deleted, setDeleted] = useState(false);
+
+  const dispatch = useDispatch();
+
+  //Grab redux state
+  const exerciseList = useSelector((state) => state.exerciseList);
+  //Destructure redux state
+  const { exercises, error, loading } = exerciseList;
+
+  //Grab delete state
+  const exerciseDelete = useSelector((state) => state.exerciseDelete);
+  const { success: successDelete } = exerciseDelete;
 
   useEffect(() => {
-    // Check to see if exercises are loaded, stop re-renders
-    if (exercises.length === 0 || deleted) {
-      getExercises();
-      setTimeout(() => {
-        setDeleted(false);
-      }, 3000);
-    } else {
-      console.log("Exercises Loaded");
-    }
-  }, [deleted]);
+    dispatch(listExercises());
 
-  const getExercises = () => {
-    let exerciseData = [];
-    axios.get("http://localhost:5000/exercises/").then((res) => {
-      if (res.data.length > 0) {
-        exerciseData = res.data.map((exercise) => exercise);
-        console.log(exerciseData);
-      }
-      setExercises(exerciseData);
-    });
-  };
+    // setTimeout(() => {
+    //   setDeleted(false);
+    // }, 3000);
+  }, [dispatch, successDelete]);
 
-  const deleteExercise = (id) => {
-    axios.delete(`http://localhost:5000/exercises/${id}`);
-    setTimeout(() => {
-      setDeleted(true);
-    }, 1500);
-    console.log("Deleted exercise");
+  const handleDelete = (id) => {
+    dispatch(deleteExercise(id));
   };
 
   return (
     <div>
       <h3>Logged Exercises</h3>
-      <table className="table">
-        <thead className="thead-light">
-          <tr>
-            <th>Username</th>
-            <th>Description</th>
-            <th>Duration</th>
-            <th>Date</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {exercises.map((exercise, index) => (
-            <tr key={exercise._id} className="mb-4 pb-4">
-              <td>{exercise.username}</td>
-              <td>{exercise.description}</td>
-              <td>{exercise.duration} minutes</td>
-              <td>{exercise.date.substring(0, 10)}</td>
-              <td>
-                <Link to={"/edit/" + exercise._id}>edit</Link> |{" "}
-                <a
-                  href="#"
-                  onClick={() => {
-                    deleteExercise(exercise._id);
-                  }}>
-                  delete
-                </a>
-              </td>
+      {loading ? (
+        <h1>Loading...</h1>
+      ) : error ? (
+        <h3>{error}</h3>
+      ) : (
+        <table className="table">
+          <thead className="thead-light">
+            <tr>
+              <th>Username</th>
+              <th>Description</th>
+              <th>Duration</th>
+              <th>Date</th>
+              <th>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {exercises.map((exercise, index) => (
+              <tr key={exercise._id} className="mb-4 pb-4">
+                <td>{exercise.username}</td>
+                <td>{exercise.description}</td>
+                <td>{exercise.duration} minutes</td>
+                <td>{exercise.date.substring(0, 10)}</td>
+                <td>
+                  <Link to={"/edit/" + exercise._id}>edit</Link> |{" "}
+                  <a
+                    href="#"
+                    onClick={() => {
+                      handleDelete(exercise._id);
+                    }}>
+                    delete
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };
