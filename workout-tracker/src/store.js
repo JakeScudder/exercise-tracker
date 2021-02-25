@@ -4,11 +4,19 @@ import { composeWithDevTools } from "redux-devtools-extension";
 import {
   exerciseDeleteReducer,
   exerciseListReducer,
+  createUserReducer,
+  userListReducer,
+  exerciseIdReducer,
+  exerciseAddReducer,
 } from "./reducers/exerciseReducers.js";
 
 const reducer = combineReducers({
   exerciseList: exerciseListReducer,
+  exerciseId: exerciseIdReducer,
+  exerciseAdd: exerciseAddReducer,
   exerciseDelete: exerciseDeleteReducer,
+  createUser: createUserReducer,
+  userList: userListReducer,
 });
 
 const initialState = {};

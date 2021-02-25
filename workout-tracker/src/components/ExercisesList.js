@@ -18,13 +18,15 @@ const ExercisesList = () => {
   const exerciseDelete = useSelector((state) => state.exerciseDelete);
   const { success: successDelete } = exerciseDelete;
 
-  useEffect(() => {
-    dispatch(listExercises());
+  //Grab add exercise state
+  const exerciseAdd = useSelector((state) => state.exerciseAdd);
+  const { success: successAdd } = exerciseAdd;
 
-    // setTimeout(() => {
-    //   setDeleted(false);
-    // }, 3000);
-  }, [dispatch, successDelete]);
+  useEffect(() => {
+    if (!exercises || exercises.length === 0 || successAdd) {
+      dispatch(listExercises());
+    }
+  }, [dispatch, successAdd, successDelete]);
 
   const handleDelete = (id) => {
     dispatch(deleteExercise(id));

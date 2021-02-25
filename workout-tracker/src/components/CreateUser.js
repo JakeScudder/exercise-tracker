@@ -1,23 +1,19 @@
 import axios from "axios";
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-const CreateUser = (props) => {
+import { createUser } from "../actions/exerciseActions";
+
+const CreateUser = ({ history }) => {
   const [user, setUser] = useState("");
+  const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const formatUser = {
-      username: user,
-    };
+    dispatch(createUser(user));
 
-    console.log(formatUser);
-
-    axios
-      .post("http://localhost:5000/users/add", formatUser)
-      .then((res) => console.log(res.data));
-
-    setUser("");
+    history.push("/");
   };
   return (
     <div>
