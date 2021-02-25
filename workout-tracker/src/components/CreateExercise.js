@@ -11,16 +11,20 @@ const CreateExercise = () => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetchUsers();
+    if (users.length > 0) {
+      console.log("users loaded");
+    } else {
+      fetchUsers();
+    }
   });
 
   const fetchUsers = () => {
+    let exerciseUsers = [];
     axios.get("http://localhost:5000/users/").then((res) => {
       if (res.data.length > 0) {
-        let exerciseUsers = [];
-        res.data.map((user) => exerciseUsers.push(user.username));
-        setUsers((arr) => [...arr, exerciseUsers]);
-
+        console.log(res.data);
+        exerciseUsers = res.data.map((user) => user.username);
+        setUsers(exerciseUsers);
         setUsername(res.data[0].username);
       }
     });
@@ -87,10 +91,7 @@ const CreateExercise = () => {
         <div className="form-group">
           <label>Date: </label>
           <div>
-            <DatePicker
-              selected={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
+            <DatePicker selected={date} onChange={(date) => setDate(date)} />
           </div>
         </div>
 
